@@ -9,12 +9,19 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookResource extends Resource
 {
     protected static ?string $model = Book::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->latest();
+    }
 
     public static function form(Form $form): Form
     {
@@ -53,8 +60,8 @@ class BookResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->label('Title'),
                 Tables\Columns\TextColumn::make('author')->label('Author'),
-                Tables\Columns\TextColumn::make('description')->label('Description'),
                 Tables\Columns\TextColumn::make('total_copies')->label('Total Copies'),
+                Tables\Columns\TextColumn::make('available_copies')->label('Available Copies'),
                 Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 Tables\Columns\TextColumn::make('rack.name')->label('Rack'),
             ])

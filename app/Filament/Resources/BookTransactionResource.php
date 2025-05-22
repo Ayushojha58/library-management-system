@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
@@ -21,6 +22,11 @@ class BookTransactionResource extends Resource
     protected static ?string $model = BookTransaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getEloquentQuery(): EloquentBuilder
+    {
+        return parent::getEloquentQuery()->latest();
+    }
 
     public static function form(Form $form): Form
     {
@@ -34,12 +40,12 @@ class BookTransactionResource extends Resource
                             ->searchable(),
                         Forms\Components\Select::make('user_id')
                             ->relationship('user', 'name')
+                            ->preload()
                             ->required()
                             ->searchable(),
                         Forms\Components\DatePicker::make('borrowed_date')
                             ->required()
-                            ->default(now())
-                            ->minDate(now()),
+                            ->default(now()),
                         Forms\Components\DatePicker::make('due_date')
                             ->required()
                             ->default(now()->addDays(14))

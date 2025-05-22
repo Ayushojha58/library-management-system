@@ -2,46 +2,37 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RackResource\Pages;
-use App\Models\Rack;
+use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class RackResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Rack::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withCount('books')->latest();
+        return parent::getEloquentQuery()->withCount('borrowed')->latest();
     }
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Rack Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
-                        Forms\Components\TextInput::make('location')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('capacity')
-                            ->required()
-                            ->numeric()
-                            ->minValue(1)
-                            ->default(50),
-                    ]),
+                TextInput::make('name')
             ]);
     }
 
@@ -50,12 +41,13 @@ class RackResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('books_count')
+                TextColumn::make('borrowed_count')
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -75,9 +67,10 @@ class RackResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRacks::route('/'),
-            'create' => Pages\CreateRack::route('/create'),
-            'edit' => Pages\EditRack::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'view' => Pages\ViewUser::route('/{record}'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

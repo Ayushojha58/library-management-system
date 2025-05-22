@@ -24,6 +24,15 @@ class BookTransaction extends Model
         'returned_date' => 'date',
     ];
 
+    public static function booted(): void
+    {
+        static::created(
+            fn(Model $model) => $model->book()->update([
+                'available_copies' => $model->book->available_copies - 1
+            ])
+        );
+    }
+
     public function book()
     {
         return $this->belongsTo(Book::class);

@@ -19,6 +19,15 @@ class Book extends Model
         'rack_id',
     ];
 
+    public static function booted(): void
+    {
+        static::created(
+            fn(Model $model) => $model->updateQuietly([
+                'available_copies' => $model->total_copies
+            ])
+        );
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

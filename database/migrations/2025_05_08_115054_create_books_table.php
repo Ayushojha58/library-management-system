@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('author');
             $table->text('description')->nullable();
             $table->integer('total_copies');
-            $table->integer('available_copies');
+            $table->integer('available_copies')->nullable();
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('rack_id')->constrained()->onDelete('cascade');
             $table->timestamps();

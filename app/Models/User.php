@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function bookTransactions()
+    {
+        return $this->hasMany(BookTransaction::class, 'user_id');
+    }
+
+    public function borrowed()
+    {
+        return $this->bookTransactions()->where('status', '!=', 'returned');
+    }
 }
